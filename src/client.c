@@ -1,40 +1,39 @@
-#include "../include/minitalk.h"
-#include <signal.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ctaboada <ctaboada@student.42malaga.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/16 11:01:53 by ctaboada          #+#    #+#             */
+/*   Updated: 2025/05/19 12:07:22 by ctaboada         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int main(int ac, char **av)
+#include "../include/minitalk.h"
+
+int	main(int ac, char **av)
 {
-    if(ac < 3)
-    {
-        ft_putstr_fd("You have to introduce 3 arguments!!\n", 2);
-        return EXIT_FAILURE;
-    }
-    else
-    {
-        int server_pid = atoi(av[1]);
-        if (server_pid <= 0)
-        {
-            ft_putstr_fd("Invalid PID",2);
-            EXIT_FAILURE;
-        }
-        
-        int i = 0;
-        int bit;
-        while(av[2][i])
-        {
-            bit = 8;
-            while(bit--)
-            {
-                if ((av[2][i] >> bit )& 1)
-                {
-                    kill(server_pid,SIGUSR1);
-                }
-                else
-                {
-                    kill(server_pid,SIGUSR2);
-                }
-                usleep(100);
-            }
-        }
-    }
-    return EXIT_SUCCESS;        
+	int	i;
+	int	server_pid;
+
+	if (ac < 3)
+	{
+		ft_putstr_fd("You have to introduce 2 arguments!!\n", 2);
+		return (EXIT_FAILURE);
+	}
+	else
+	{
+		i = 0;
+		server_pid = atoi(av[1]);
+		if (server_pid <= 0)
+		{
+			ft_putstr_fd("Invalid PID\n", 2);
+			return (EXIT_FAILURE);
+		}
+		while (av[2][i] != '\0')
+			atob(server_pid, &av[2][i++]);
+		atob(server_pid, "\n");
+	}
+	return (EXIT_SUCCESS);
 }

@@ -1,47 +1,45 @@
-#include <signal.h>   // Señales
-#include <unistd.h>   // write(), getpid(), pause()
-#include <stdlib.h>   // NULL
-#include "../include/minitalk.h"  // tus funciones: ft_putstr_fd, ft_putnbr_fd
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ctaboada <ctaboada@student.42malaga.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/12 12:33:50 by ctaboada          #+#    #+#             */
+/*   Updated: 2025/05/16 12:08:59 by ctaboada         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-static void signal_handler(int signal_number, siginfo_t *info, void *context)
+#include "../include/minitalk.h"
+
+static void	signal_handler(int signal_number)
 {
-	static int bit;
-	static unsigned char str;
-	bit = 8;
-	str = 0;
-    (void)info;
-    (void)context;
+	static int				bit;
+	static unsigned char	byte;
 
-    if(signal_number == SIGUSR2)
+	if (signal_number == SIGUSR1)
 	{
-        str |= (1 << (7 - bit));
+		byte |= (1 << (7 - bit));
 	}
 	bit++;
-	if(bit == 8)
+	if (bit == 8)
 	{
-		write(1,&str,1);
+		write(1, &byte, 1);
+		if (byte == 0)
+			printf("\n");
 		bit = 0;
-		str = 0;	
+		byte = 0;
 	}
 }
 
-int main(void)
+int	main(void)
 {
-    struct sigaction sa;
-
-    ft_putstr_fd("PID SERVER : ", 1);
-    ft_putnbr_fd(getpid(), 1);
-    write(1, "\n", 1);
-
-    sa.sa_sigaction = &signal_handler;
-    sa.sa_flags = SA_SIGINFO;
-    sigemptyset(&sa.sa_mask);
-
-    sigaction(SIGUSR1, &sa, NULL);
-    sigaction(SIGUSR2, &sa, NULL);
-
-    while (1)
-        pause();
-
-    return (0); // buena práctica
+	ft_putstr_fd("PID SERVER : ", 1);
+	ft_putnbr_fd(getpid(), 1);
+	write(1, "\n", 1);
+	signal(SIGUSR1, signal_handler);
+	signal(SIGUSR2, signal_handler);
+	while (1)
+		pause();
+	return (0);
 }
